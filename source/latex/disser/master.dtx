@@ -1,0 +1,148 @@
+%    \begin{macrocode}
+
+%<master>\ProvidesFile{master.rtx}
+
+%<*master>
+%    \end{macrocode}
+% \subsubsection{Стиль магистерской диссертации}
+%
+% Нумерация.
+%    \begin{macrocode}
+\newcommand\master@the{\default@the}
+\master@the
+
+%    \end{macrocode}
+% Титульный лист.
+% \DescribeMacro{\maketitle}\index{Макросы!\verb*+\maketitle+}
+%    \begin{macrocode}
+\if@titlepage\renewcommand\maketitle[1][]{
+%    \end{macrocode}
+% Переопределения некоторых полей титульного листа для англоязычной версии.
+%    \begin{macrocode}
+\ifthenelse{\equal{#1}{en}}{\@titlepage@entrue}{\@titlepage@enfalse}
+\if@titlepage@en
+  \def\appos{Head of Department}
+  \def\approved{``Approved for defence''}
+  \def\revname{Reviewer}
+  \def\revsndname{\revname}
+  \def\revlabel{\revname}
+  \def\revsndlabel{\revsndname}
+  \def\saname{Scientific Supervisor}
+  \def\sasndname{\saname}
+  \def\salabel{\saname}
+  \def\sasndlabel{\saname}
+  \def\topicname{Topic}
+  \def\coursename{Speciality}
+  \def\studentname{Student}
+  \def\studentlabel{\studentname\hspace{6cm}}
+  \def\masterprogname{Master's Program}
+\fi
+
+%    \end{macrocode}
+% Вертикальные интервалы между элементами титульного листа.
+% \DescribeMacro{\firstskip}\index{Расстояния!\verb*+\firstskip+}
+% \DescribeMacro{\secondskip}\index{Расстояния!\verb*+\secondskip+}
+% \DescribeMacro{\thirdskip}\index{Расстояния!\verb*+\thirdskip+}
+% \DescribeMacro{\fourthskip}\index{Расстояния!\verb*+\fourthskip+}
+% \DescribeMacro{\fifthskip}\index{Расстояния!\verb*+\fifthskip+}
+%    \begin{macrocode}
+\ifundeflength\firstskip{1ex}
+\ifundeflength\secondskip{1ex}
+\ifundeflength\thirdskip{1ex}
+\ifundeflength\fourthskip{-1cm}
+\ifundeflength\fifthskip{0ex}
+\ifundeflength\sixthskip{1.5ex}
+
+%    \end{macrocode}
+% Горизонтальный отступ перед чертой в текстовым поле для имени, ученой
+% степени и звания научного руководителя и консультанта.
+% \DescribeMacro{\fieldhshift}\index{Расстояния!\verb*+\fieldhshift+}
+%    \begin{macrocode}
+\setlength\fieldhshift{8.5cm}
+
+%    \end{macrocode}
+% Шрифты элементов титульного листа.
+% \DescribeMacro{\titlefont}\index{Макросы!\verb*+\titlefont+}
+% \DescribeMacro{\topiclabelfont}\index{Макросы!\verb*+\topiclabelfont+}
+% \DescribeMacro{\topicfont}\index{Макросы!\verb*+\topicfont+}
+%    \begin{macrocode}
+\def\titlefont{\Large\bfseries}
+\def\topiclabelfont{\large}
+\def\topicfont{\large\bfseries}
+
+\thispagestyle{empty}
+\enlargethispage{2cm}
+\vspace*{-2cm}
+%    \end{macrocode}
+% \paragraph{Название организации}
+%    \begin{macrocode}
+\begin{center}
+\instfont\@institution\par
+\end{center}
+
+%    \end{macrocode}
+% Диссертация допущена к защите
+%    \begin{macrocode}
+\vskip\firstskip
+\@approved
+\vskip\secondskip
+\begin{center}
+%    \end{macrocode}
+% Заголовок.
+%    \begin{macrocode}
+  {\titlefont\@title}
+  \vskip\thirdskip
+%    \end{macrocode}
+% Тема
+%    \begin{macrocode}
+  {\topiclabelfont\topiclabel}
+  {\topicfont\@topic}
+\end{center}
+\vskip\fourthskip
+\begin{tabbing}
+  \phantom{\masterproglabel}\=\\
+%    \end{macrocode}
+% Направление
+%    \begin{macrocode}
+  \courselabel\>\ \@coursenum\ --\ \@course\\
+%    \end{macrocode}
+% Магистерская программа: номер -- название.
+%    \begin{macrocode}
+  \masterproglabel\>\ \@masterprognum\ --\ \@masterprog
+\end{tabbing}
+\vskip\fifthskip
+\begin{tabbing}
+%    \end{macrocode}
+%
+% Выполнил студент гр. номер...
+%    \begin{macrocode}
+  \studentlabel\=\makebox[\fieldhshift][l]{\hrulefill\ \@author}\\[\sixthskip]
+%    \end{macrocode}
+% Научный руководитель.
+%    \begin{macrocode}
+  \ifx\@sa\empty\else\diplomafield{sa}\\[\sixthskip]\fi
+  \ifx\@sasnd\empty\else\diplomafield{sasnd}\\[\sixthskip]\fi
+%    \end{macrocode}
+%
+% Рецензент
+%    \begin{macrocode}
+  \ifx\@rev\empty\else\diplomafield{rev}\\[\sixthskip]\fi
+  \ifx\@revsnd\empty\else\diplomafield{revsnd}\\[\sixthskip]\fi
+%    \end{macrocode}
+%
+% Консультант
+%    \begin{macrocode}
+  \ifx\@con\empty\else\diplomafield{con}\\[9pt]\fi
+  \ifx\@consnd\empty\else\diplomafield{consnd}\fi
+\end{tabbing}
+%    \end{macrocode}
+% \paragraph{Город и год}
+%    \begin{macrocode}
+\vfill
+\begin{center}
+  {\@city\cdsep\@date}
+\end{center}
+\normalfont\clearpage
+}\fi
+%</master>
+%    \end{macrocode}

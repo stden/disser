@@ -1,0 +1,319 @@
+
+% \iffalse
+%%% From File: custom.dtx
+% \fi
+%
+%    \begin{macrocode}
+
+%<*custom>
+%    \end{macrocode}
+% \subsection{Подключение и настройка сторонних пакетов}
+%
+% \DescribePackage{amsmath}\index{Пакеты!\verb*+amsmath+}
+% \DescribePackage{amssymb}\index{Пакеты!\verb*+amssymb+}
+% \DescribePackage{amsfonts}\index{Пакеты!\verb*+amsfonts+}
+%    \begin{macrocode}
+\ifDis@ams
+  \usepackage[intlimits]{amsmath}
+  \usepackage{amssymb,amsfonts}
+\fi
+
+%    \end{macrocode}
+% Подключение шрифта Times вместо Computer Modern Roman.
+%    \begin{macrocode}
+\ifDis@times
+%    \end{macrocode}
+% Реализация команд |\English| и |\Eng| без переключения кодировок шрифта.
+% Это необходимо для корректного отображения символа переноса строки при
+% использовании пакетов \pkg{pscyr} и \pkg{cyrtimes}.
+% \DescribeMacro{\English}\index{Макросы!\verb*+\English+}
+% \DescribeMacro{\Eng}\index{Макросы!\verb*+\Eng+}
+%    \begin{macrocode}
+  \AtBeginDocument{
+    \DeclareRobustCommand{\English}{%
+      \expandafter\set@hyphenmins\englishhyphenmins
+      \language\l@english}%
+    \let\Eng=\English
+  }
+  \ifDis@mtpro
+    \AtBeginDocument{%
+%    \end{macrocode}
+% \DescribePackage{mtpro}\index{Пакеты!\verb*+mtpro+}
+%    \begin{macrocode}
+      \IfFileExists{mtpro2.sty}{
+        \usepackage[subscriptcorrection,nofontinfo]{mtpro2}
+      }{
+        \IfFileExists{mtpro.sty}{
+          \usepackage[subscriptcorrection,nofontinfo,boldalphabet]{mtpro}
+        }{
+          \PackageWarning{disser}%
+            {Unable to find mtpro package. Font is unchanged.}
+        }
+      }
+    }
+  \else
+%    \end{macrocode}
+% \DescribePackage{txfonts}\index{Пакеты!\verb*+txfonts+}
+%    \begin{macrocode}
+  \AtEndOfPackage{%
+    \IfFileExists{txfonts.sty}{
+      \usepackage{txfonts}
+    }{
+      \PackageWarning{disser}%
+        {Unable to find txfonts package. Font is unchanged.}
+    }
+  }
+  \fi
+  \AtEndOfPackage{%
+    \IfFileExists{pscyr.sty}{
+%    \end{macrocode}
+% \DescribePackage{pscyr}\index{Пакеты!\verb*+pscyr+}
+% Установка Times как шрифта по умолчанию, выбор стандартного моноширинного
+% шрифта.
+%    \begin{macrocode}
+      \usepackage{pscyr}
+      \renewcommand\rmdefault{ftm}
+      \renewcommand\ttdefault{cmtt}
+    }{
+      \IfFileExists{cyrtimes.sty}{
+%    \end{macrocode}
+% \DescribePackage{cyrtimes}\index{Пакеты!\verb*+cyrtimes+}
+% Вместо \pkg{pscyr} может быть использован пакет \pkg{cyrtimes}, входящий в
+% состав дистрибутива \TeX Live.
+%    \begin{macrocode}
+        \usepackage{cyrtimes}
+      }{
+        \PackageWarning{disser}%
+          {Unable to find pscyr or cyrtimes package. Font is unchanged.}
+      }
+    }
+  }
+\fi
+
+%    \end{macrocode}
+% Более естественные символы интегралов из шрифтов семейства Euler.
+%    \begin{macrocode}
+\ifDis@fixint
+  \DeclareSymbolFont{EulerExtension}{U}{euex}{m}{n}
+  \DeclareMathSymbol\intop\mathop{EulerExtension}{"52}
+  \DeclareMathSymbol\ointop\mathop{EulerExtension}{"48}
+  \AtBeginDocument{%
+    \def\intkern@{\mkern -6mu }%
+    \def\ints@#1{\mkern -3mu
+      \mathop{\mkern 3mu
+        \intop
+        \ifnum #1=\z@ \intdots@ \else
+          \intkern@
+          \ifnum #1>\tw@ \intop\intkern@
+            \ifnum #1>\thr@@ \intop\intkern@ \fi
+          \fi
+        \fi
+        \intop
+       }\ilimits@
+    }%
+    \renewcommand{\iint}{\DOTSI\protect\MultiIntegral{2}}
+    \renewcommand{\iiint}{\DOTSI\protect\MultiIntegral{3}}
+    \renewcommand{\iiiint}{\DOTSI\protect\MultiIntegral{4}}
+    \renewcommand{\idotsint}{\DOTSI\protect\MultiIntegral{0}}
+  }{}
+\fi
+
+%    \end{macrocode}
+% \subsubsection{Библиографические ссылки}
+% \DescribePackage{natbib}\index{Пакеты!\verb*+natbib+}
+%    \begin{macrocode}
+\usepackage[square,comma,sort&compress,numbers]{natbib}
+
+%    \end{macrocode}
+% Переопределение |\bibsection| для включения ссылки на список литературы в
+% оглавление.
+% \DescribeMacro{\bibsection}\index{Макросы!\verb*+\bibsection+}
+%    \begin{macrocode}
+\renewcommand\bibsection{\nchapter{\bibname}}
+\@ifundefined{chapter}{%
+  \renewcommand\bibsection{%
+   \nsection{\bibname\@mkboth{\MakeUppercase{\bibname}}{\MakeUppercase{\bibname}}}%
+  }%
+}{%
+  \@ifxundefined\NAT@sectionbib{%
+    \renewcommand\bibsection{%
+      \nchapter{\bibname\@mkboth{\MakeUppercase{\bibname}}{\MakeUppercase{\bibname}}}%
+    }%
+  }{%
+    \renewcommand\bibsection{%
+      \nsection{\bibname\ifx\@mkboth\@gobbletwo\else\markright{\MakeUppercase{\bibname}}\fi}%
+    }%
+  }%
+}%
+
+%    \end{macrocode}
+% Преамбула окружения |thebibliography|.
+% \DescribeMacro{\bibpreamble}\index{Макросы!\verb*+\bibpreamble+}
+%    \begin{macrocode}
+\renewcommand\bibpreamble{%
+%    \end{macrocode}
+% Формат номера в списке литературы.
+% \DescribeMacro{\@biblabel}\index{Макросы!\verb*+"\"@biblabel+}
+%    \begin{macrocode}
+  \renewcommand\@biblabel[1]{##1.}%
+}
+
+%    \end{macrocode}
+% Переопределение окружения |thebibliography| для создания корректной
+% PDF-закладки (основано на варианте из \pkg{natbib}).
+% \DescribeEnv{thebibliography}\index{Окружения!\verb*+thebibliography+}
+%    \begin{macrocode}
+\renewenvironment{thebibliography}[1]{%
+  \bibsection
+  \parindent \z@
+  \bibpreamble\bibfont
+  \list{\@biblabel{\arabic{NAT@ctr}}}%
+  {\@bibsetup{#1}\setcounter{NAT@ctr}{0}}%
+  \ifNAT@openbib
+    \renewcommand\newblock{\par}
+  \else
+    \renewcommand\newblock{\hskip .11em \@plus.33em \@minus.07em}%
+  \fi
+  \sloppy\clubpenalty4000\widowpenalty4000
+  \sfcode`\.=1000\relax
+  \let\citeN\cite
+  \let\shortcite\cite
+  \let\citeasnoun\cite
+}{%
+  \def\@noitemerr{%
+    \PackageWarning{natbib}{Empty `thebibliography' environment}%
+  }
+  \endlist\vskip-\lastskip%
+}
+
+%    \end{macrocode}
+% \subsubsection{Плавающие объекты}
+%
+% Плавающие рисунки <<в оборку>>.
+% \DescribePackage{wrapfig}\index{Пакеты!\verb*+wrapfig+}
+%    \begin{macrocode}
+\usepackage{wrapfig}
+%    \end{macrocode}
+% Пакеты \pkg{caption} и \pkg{subfig} для вложенной нумерации плавающих
+% объектов.
+% \DescribePackage{caption}\index{Пакеты!\verb*+caption+}
+% \DescribePackage{subfig}\index{Пакеты!\verb*+subfig+}
+%    \begin{macrocode}
+\ifDis@subf
+  \usepackage[config,font=small,labelsep=period]{caption,subfig}
+%    \end{macrocode}
+% Формат счетчика.
+%    \begin{macrocode}
+  \def\thesubfigure{\textit{\asbuk{subfigure}}}
+%    \end{macrocode}
+% Формат ссылки через |\ref|.
+% \DescribeMacro{\thefigsubsep}\index{Макросы!\verb*+\thefigsubsep+}
+%    \begin{macrocode}
+  \providecommand\thefigsubsep{,~}
+  \def\p@subfigure{\@nameuse{thefigure}\thefigsubsep}
+\fi
+
+%    \end{macrocode}
+% \subsubsection{Hyperref}
+%    \begin{macrocode}
+\ifpdf
+  \ifDis@href
+%    \end{macrocode}
+% \DescribePackage{hyperref}\index{Пакеты!\verb*+hyperref+}
+%    \begin{macrocode}
+    \usepackage[pdftex,unicode]{hyperref}
+    \hypersetup{
+      colorlinks         = false,
+      bookmarksopen      = true,
+      bookmarksnumbered  = true,
+      bookmarksopenlevel = 2,
+      pdfstartview       = {FitH},
+      pdfborder          = {0 0 0}
+    }
+    \pdfcompresslevel = 9
+  \fi
+%    \end{macrocode}
+% \DescribePackage{graphicx}\index{Пакеты!\verb*+graphicx+}
+% \DescribePackage{cmap}\index{Пакеты!\verb*+cmap+}
+%    \begin{macrocode}
+  \usepackage[pdftex]{graphicx}
+  \usepackage{cmap}
+\else
+  \ifDis@href
+%    \end{macrocode}
+% \DescribePackage{hyperref}\index{Пакеты!\verb*+hyperref+}
+%    \begin{macrocode}
+    \usepackage[hypertex,colorlinks=false]{hyperref}
+  \fi
+%    \end{macrocode}
+% \DescribePackage{graphicx}\index{Пакеты!\verb*+graphicx+}
+%    \begin{macrocode}
+  \usepackage{graphicx}
+\fi
+\ifDis@href
+%    \end{macrocode}
+% Включение и настройка цветных ссылок.
+%    \begin{macrocode}
+  \ifDis@colorlinks
+    \usepackage{color}
+    \definecolor{darkblue}{rgb}{0,0,.6}
+    \hypersetup{
+      colorlinks = true,     linkcolor  = darkblue,
+      citecolor  = darkblue, filecolor  = darkblue,
+      menucolor  = darkblue, urlcolor   = darkblue
+    }
+  \fi
+\fi
+
+%    \end{macrocode}
+% Команда, создающая цель для гиперссылок над заголовками ненумеруемых
+% разделов.
+% \DescribeMacro{\hrefphantom}\index{Макросы!\verb*+\hrefphantom+}
+%    \begin{macrocode}
+\providecommand\hrefphantom[1]{%
+  \ifDis@href
+    \Hy@GlobalStepCount\Hy@linkcounter
+    \xdef\@currentHref{#1*.\the\Hy@linkcounter}%
+    \Hy@raisedlink{\hyper@anchorstart{\@currentHref}\hyper@anchorend}%
+  \fi
+}
+
+%    \end{macrocode}
+% Команды для создания ненумеруемых глав и секций, которые включаются в
+% оглавление и PDF-закладки.
+% \DescribeMacro{\nchapter}\index{Макросы!\verb*+\nchapter+}
+% \DescribeMacro{\nsection}\index{Макросы!\verb*+\nsection+}
+% \DescribeMacro{\nsubsection}\index{Макросы!\verb*+\nsubsection+}
+% \DescribeMacro{\nsubsubsection}\index{Макросы!\verb*+\nsubsubsection+}
+%    \begin{macrocode}
+\newcommand\nchapter[1]{%
+  \if@openright
+    \cleardoublepage
+  \else
+    \clearpage
+  \fi
+  \thispagestyle{\@chapterpagestyle}%
+  \global\@topnum\z@
+  \hrefphantom{chapter}
+  \addcontentsline{toc}{chapter}{#1}%
+  \@afterindentfalse
+  \@schapter{#1}
+}
+\newcommand\nsection[1]{%
+  \hrefphantom{section}%
+  \addcontentsline{toc}{section}{#1}
+  \section*{#1}
+}
+\newcommand\nsubsection[1]{%
+  \hrefphantom{subsection}%
+  \addcontentsline{toc}{subsection}{#1}
+  \subsection*{#1}
+}
+\newcommand\nsubsubsection[1]{%
+  \hrefphantom{subsubsection}%
+  \addcontentsline{toc}{subsubsection}{#1}
+  \subsubsection*{#1}
+}
+
+%</custom>
+%    \end{macrocode}

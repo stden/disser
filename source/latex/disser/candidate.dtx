@@ -1,0 +1,153 @@
+%    \begin{macrocode}
+
+%<candidate>\ProvidesFile{candidate.rtx}
+
+%<*candidate>
+%    \end{macrocode}
+% \subsubsection{Стиль кандидатской диссертации}
+%
+% Нумерация.
+%    \begin{macrocode}
+\newcommand\candidate@the{\default@the}
+\candidate@the
+
+%    \end{macrocode}
+% Титульный лист.
+% \DescribeMacro{\maketitle}\index{Макросы!\verb*+\maketitle+}
+%    \begin{macrocode}
+\if@titlepage\renewcommand\maketitle[1][]{
+\ifthenelse{\equal{#1}{en}}{\@titlepage@entrue}{\@titlepage@enfalse}
+\if@titlepage@en
+  \def\appos{Head of Department}
+  \def\saname{Scientific Supervisor}
+  \def\sasndname{\saname}
+  \def\salabel{\saname}
+  \def\sasndlabel{\saname}
+  \def\sconname{Scientific Consultant}
+  \def\sconlabel{\sconname}
+  \def\sconsndname{\sconname}
+  \def\sconsndlabel{\sconname}
+  \def\topicname{Topic}
+  \def\asmanuscript{As Manuscript}
+\fi
+
+%    \end{macrocode}
+% Вертикальные интервалы между элементами титульного листа.
+% \DescribeMacro{\firstskip}\index{Расстояния!\verb*+\firstskip+}
+% \DescribeMacro{\secondskip}\index{Расстояния!\verb*+\secondskip+}
+% \DescribeMacro{\thirdskip}\index{Расстояния!\verb*+\thirdskip+}
+% \DescribeMacro{\fourthskip}\index{Расстояния!\verb*+\fourthskip+}
+% \DescribeMacro{\fifthskip}\index{Расстояния!\verb*+\fifthskip+}
+% \DescribeMacro{\sixthskip}\index{Расстояния!\verb*+\sixthskip+}
+%    \begin{macrocode}
+\ifx\firstskip\undefined
+  \newlength\firstskip
+  \ifDis@libcat
+    \setlength\firstskip{2ex}
+  \else
+    \setlength\firstskip{4ex}
+  \fi
+\fi
+\ifundeflength\secondskip{2cm}
+\ifundeflength\thirdskip{1cm}
+\ifundeflength\fourthskip{1cm}
+\ifundeflength\fifthskip{1cm}
+\ifundeflength\sixthskip{0cm}
+
+%    \end{macrocode}
+% Шрифты элементов титульного листа.
+% \DescribeMacro{\titlefont}\index{Макросы!\verb*+\titlefont+}
+% \DescribeMacro{\topicfont}\index{Макросы!\verb*+\topicfont+}
+% \DescribeMacro{\authorfont}\index{Макросы!\verb*+\authorfont+}
+% \DescribeMacro{\specfont}\index{Макросы!\verb*+\specfont+}
+%    \begin{macrocode}
+\def\titlefont{\normalsize}
+\def\topicfont{\Large\bfseries}
+\def\authorfont{\large}
+\def\specfont{\normalsize}
+
+\thispagestyle{empty}
+\enlargethispage{2cm}
+\vspace*{-2cm}
+
+%    \end{macrocode}
+% \paragraph{Название организации}
+%    \begin{macrocode}
+\begin{center}
+  \instfont\@institution\par
+\end{center}
+\vskip\firstskip
+\begin{flushright}
+%    \end{macrocode}
+% Гриф секретности
+%    \begin{macrocode}
+  \ifDis@classified\classify\fi
+%    \end{macrocode}
+% На правах рукописи
+%    \begin{macrocode}
+  \asmanuscript\\
+%    \end{macrocode}
+% Факсимиле
+%    \begin{macrocode}
+  \ifDis@facsimile\facsimile\fi
+%    \end{macrocode}
+% Номер УДК
+%    \begin{macrocode}
+  \ifDis@libcat\libcatname\ \@libcatnum\fi
+\end{flushright}
+\begin{center}
+%    \end{macrocode}
+% Автор
+%    \begin{macrocode}
+  \vskip\secondskip
+  {\authorfont\@author}
+%    \end{macrocode}
+% Название диссертации
+%    \begin{macrocode}
+  \vskip\thirdskip
+  {\topicfont\@topic\par}
+%    \end{macrocode}
+% Шифр и наименование специальности
+%    \begin{macrocode}
+  \vskip\fourthskip
+  {\specfont\@specnum~--\ \@spec}\\[-6pt]
+  \ifx\@specsndnum\empty\else
+    {\specfont\@specsndnum~--\ \@specsnd}
+  \fi
+%    \end{macrocode}
+% Диссертация на соискание ученой степени...
+%    \begin{macrocode}
+  \vskip\fifthskip
+  {\titlefont\@title}
+\end{center}
+%    \end{macrocode}
+% Научный руководитель
+%    \begin{macrocode}
+\ifx\@sa\empty\else
+  \vskip\sixthskip\disserfield{sa}
+\fi
+\ifx\@sasnd\empty\else
+  \vskip\sixthskip\disserfield{sasnd}
+\fi
+%    \end{macrocode}
+% Научный консультант
+%    \begin{macrocode}
+\ifx\@scon\empty\else
+  \vskip\sixthskip
+  \disserfield{scon}
+\fi
+\ifx\@sconsnd\empty\else
+  \vskip\sixthskip
+  \disserfield{sconsnd}
+\fi
+%    \end{macrocode}
+% \paragraph{Город и год}
+%    \begin{macrocode}
+\vfill
+\begin{center}
+  {\@city\cdsep\@date}
+\end{center}
+\normalfont\clearpage
+}\fi
+%</candidate>
+%    \end{macrocode}
